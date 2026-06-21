@@ -1,0 +1,12 @@
+<%- include('partials/header') %>
+    <section class="hero">
+        <h1>Stop overthinking. Start wandering.</h1>
+        <p>Answer 5 questions. Get a complete trip itinerary — destination, activities, and budget — in seconds.</p>
+        <% if (isLoggedIn) { %>
+            <a href="/trips/new" class="btn">Plan a Trip</a>
+            <% } else { %>
+                <a href="/register" class="btn">Get Started</a>
+                <a href="/login" class="btn btn-outline">Login</a>
+                <% } %>
+    </section>
+    <%- include('partials/footer') %>

@@ -1,0 +1,35 @@
+<%- include('../../partials/header') %>
+    <h1>Create Account</h1>
+    <% if (errors.length> 0) { %>
+        <ul class="error-list">
+            <% errors.forEach(e=> { %><li>
+                    <%= e.msg %>
+                </li>
+                <% }); %>
+        </ul>
+        <% } %>
+            <form action="/register" method="POST">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" name="firstName" value="<%= formData.firstName || '' %>">
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" value="<%= formData.lastName || '' %>">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="<%= formData.email || '' %>">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword">
+                </div>
+                <button type="submit" class="btn">Create Account</button>
+            </form>
+            <p>Already have an account? <a href="/login">Login</a></p>
+            <%- include('../../partials/footer') %>

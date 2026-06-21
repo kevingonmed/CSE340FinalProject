@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %> | WanderDecide
+    </title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo">🧳 WanderDecide</a>
+            <div class="nav-links">
+                <% if (isLoggedIn) { %>
+                    <a href="/dashboard">My Trips</a>
+                    <a href="/logout">Logout</a>
+                    <% } else { %>
+                        <a href="/login">Login</a>
+                        <a href="/register">Register</a>
+                        <% } %>
+            </div>
+        </nav>
+    </header>
+
+    <% const messages=flash(); const hasMessages=Object.values(messages).some(arr=> arr.length > 0);
+        %>
+        <% if (hasMessages) { %>
+            <div class="flash-messages">
+                <% Object.keys(messages).forEach(type=> { %>
+                    <% messages[type].forEach(message=> { %>
+                        <div class="flash <%= type %>">
+                            <%= message %>
+                        </div>
+                        <% }); %>
+                            <% }); %>
+            </div>
+            <% } %>
+
+                <main>
