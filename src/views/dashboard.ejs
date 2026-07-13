@@ -1,5 +1,22 @@
 <%- include('partials/header') %>
     <h1>Welcome back, <%= user.firstName %>!</h1>
-    <p>Your saved trips will appear here.</p>
+    <p>Your saved trips are below. Create a new one any time.</p>
     <a href="/trips/new" class="btn">Plan a New Trip</a>
+    <section class="dashboard-trips">
+        <% if (trips.length === 0) { %>
+            <p class="empty-state">No trips saved yet. Start by planning your first trip.</p>
+        <% } else { %>
+            <div class="trip-card-grid">
+                <% trips.forEach((trip) => { %>
+                    <article class="trip-card">
+                        <h3><%= trip.destination %></h3>
+                        <p><strong>Dates:</strong> <%= trip.travel_dates %></p>
+                        <p><strong>Budget:</strong> $<%= Number(trip.budget).toFixed(2) %></p>
+                        <p><strong>Vibe:</strong> <%= trip.vibe %></p>
+                        <a href="/trips/<%= trip.id %>" class="btn btn-outline">View Itinerary</a>
+                    </article>
+                <% }); %>
+            </div>
+        <% } %>
+    </section>
     <%- include('partials/footer') %>

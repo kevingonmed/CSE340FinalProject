@@ -2,8 +2,10 @@ import express from 'express';
 import { showLoginForm, processLogin, processLogout } from './controllers/forms/login.js';
 import { showRegistrationForm, processRegistration } from './controllers/forms/registration.js';
 import { showDashboard } from './controllers/dashboard.js';
+import { showNewTripForm, processNewTrip, showTrip } from './controllers/trips.js';
 import { requireLogin } from './middleware/auth.js';
 import { loginValidation, registrationValidation } from './middleware/validation/forms.js';
+import { tripValidation } from './middleware/validation/trips.js';
 
 const router = express.Router();
 
@@ -19,5 +21,8 @@ router.get('/logout', processLogout);
 
 // Dashboard (protected)
 router.get('/dashboard', requireLogin, showDashboard);
+router.get('/trips/new', requireLogin, showNewTripForm);
+router.post('/trips/new', requireLogin, tripValidation, processNewTrip);
+router.get('/trips/:id', requireLogin, showTrip);
 
 export default router;

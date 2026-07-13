@@ -1,0 +1,47 @@
+<%- include('../partials/header') %>
+    <section class="trip-hero">
+        <h1><%= trip.destination %></h1>
+        <p><%= trip.why_picked %></p>
+        <div class="trip-meta-grid">
+            <div class="trip-meta-card">
+                <h3>Budget</h3>
+                <p>$<%= Number(trip.budget).toFixed(2) %></p>
+            </div>
+            <div class="trip-meta-card">
+                <h3>Travel Dates</h3>
+                <p><%= trip.travel_dates %></p>
+            </div>
+            <div class="trip-meta-card">
+                <h3>Group</h3>
+                <p><%= trip.group_type %></p>
+            </div>
+            <div class="trip-meta-card">
+                <h3>Vibe</h3>
+                <p><%= trip.vibe %></p>
+            </div>
+        </div>
+        <a href="/dashboard" class="btn btn-outline">Back to Dashboard</a>
+    </section>
+
+    <section>
+        <h2>Your Itinerary</h2>
+        <div class="itinerary-list">
+            <% trip.days.forEach((day) => { %>
+                <article class="itinerary-day">
+                    <h3>Day <%= day.dayNumber %>: <%= day.title %></h3>
+                    <ul>
+                        <% day.activities.forEach((activity) => { %>
+                            <li>
+                                <strong><%= activity.time %></strong>
+                                <span><%= activity.description %></span>
+                                <% if (activity.estimatedCost !== null && activity.estimatedCost !== undefined) { %>
+                                    <em>$<%= Number(activity.estimatedCost).toFixed(2) %></em>
+                                <% } %>
+                            </li>
+                        <% }); %>
+                    </ul>
+                </article>
+            <% }); %>
+        </div>
+    </section>
+<%- include('../partials/footer') %>

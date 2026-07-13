@@ -1,0 +1,83 @@
+<%- include('../partials/header') %>
+    <section class="trip-form-section">
+        <h1>Plan Your Next Trip</h1>
+        <p>Answer five quick questions and we will build your starter itinerary.</p>
+
+        <% if (errors.length > 0) { %>
+            <ul class="error-list">
+                <% errors.forEach((e) => { %>
+                    <li><%= e.msg %></li>
+                <% }); %>
+            </ul>
+        <% } %>
+
+        <form action="/trips/new" method="POST" class="trip-form">
+            <div class="form-group">
+                <label for="homeCity">Home City</label>
+                <input
+                    type="text"
+                    id="homeCity"
+                    name="homeCity"
+                    value="<%= formData.homeCity || '' %>"
+                    placeholder="Rexburg, ID"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="budget">Trip Budget (USD)</label>
+                <input
+                    type="number"
+                    min="1"
+                    step="0.01"
+                    id="budget"
+                    name="budget"
+                    value="<%= formData.budget || '' %>"
+                    placeholder="1200"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="travelDates">Travel Dates</label>
+                <input
+                    type="text"
+                    id="travelDates"
+                    name="travelDates"
+                    value="<%= formData.travelDates || '' %>"
+                    placeholder="Aug 5-9, 2026"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="groupType">Who are you traveling with?</label>
+                <select id="groupType" name="groupType">
+                    <option value="">Select one</option>
+                    <% groupTypes.forEach((group) => { %>
+                        <option
+                            value="<%= group %>"
+                            <%= formData.groupType === group ? 'selected' : '' %>
+                        >
+                            <%= group.charAt(0).toUpperCase() + group.slice(1) %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="vibe">What vibe are you looking for?</label>
+                <select id="vibe" name="vibe">
+                    <option value="">Select one</option>
+                    <% vibes.forEach((currentVibe) => { %>
+                        <option
+                            value="<%= currentVibe %>"
+                            <%= formData.vibe === currentVibe ? 'selected' : '' %>
+                        >
+                            <%= currentVibe.charAt(0).toUpperCase() + currentVibe.slice(1) %>
+                        </option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <button type="submit" class="btn">Generate Trip</button>
+        </form>
+    </section>
+<%- include('../partials/footer') %>
