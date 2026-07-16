@@ -45,6 +45,10 @@ app.use(express.json());
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'src/views'));
+// Render terminates TLS at the edge proxy. Trusting proxy enables secure cookies.
+if (isRender) {
+    app.set('trust proxy', 1);
+}
 
 const PgSession = pg(session);
 const sessionPool = new Pool({
@@ -61,10 +65,12 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'fallback-secret',
     resave: false,
     saveUninitialized: false,
+    proxy: isRender,
     cookie: {
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: NODE_ENV === 'production',
+        secure: NODE_ENV === 'production' || isRender,
+        sameSite: 'lax'
     },
 }));
 
