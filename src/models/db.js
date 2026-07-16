@@ -5,9 +5,25 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const isRender = !!process.env.RENDER;
+const caCertPath = path.join(__dirname, '../../bin', 'byuicse-psql-cert.pem');
 
-// Read the CA certificate content
-const caCert = fs.readFileSync(path.join(__dirname, '../../bin', 'byuicse-psql-cert.pem'));
+const buildSslConfig = () => {
+    if (isRender) {
+        return { rejectUnauthorized: false };
+    }
+
+    if (fs.existsSync(caCertPath)) {
+        const caCert = fs.readFileSync(caCertPath);
+        return {
+            ca: caCert,
+            rejectUnauthorized: true,
+            checkServerIdentity: () => undefined
+        };
+    }
+
+    return false;
+};
 
 /**
  * Connection pool for PostgreSQL database.
@@ -22,11 +38,7 @@ const caCert = fs.readFileSync(path.join(__dirname, '../../bin', 'byuicse-psql-c
  */
 const pool = new Pool({
     connectionString: process.env.DB_URL,
-    ssl: {
-        ca: caCert,  // Use the certificate content, not the file path
-        rejectUnauthorized: true,  // Keep this true for proper security
-        checkServerIdentity: () => { return undefined; }  // Skip hostname verification but keep cert chain validation
-    }
+    ssl: buildSslConfig()
 });
 
 /**
@@ -36,7 +48,7 @@ const pool = new Pool({
  */
 let db = null;
 
-if (process.env.NODE_ENV.includes('dev') && process.env.ENABLE_SQL_LOGGING === 'true') {
+if ((process.env.NODE_ENV || '').includes('dev') && process.env.ENABLE_SQL_LOGGING === 'true') {
     /**
      * In development mode, we wrap the pool to provide query logging.
      * This helps with debugging by showing all executed queries in the console.
@@ -75,4 +87,3 @@ if (process.env.NODE_ENV.includes('dev') && process.env.ENABLE_SQL_LOGGING === '
 }
 
 export default db;
-export { caCert };

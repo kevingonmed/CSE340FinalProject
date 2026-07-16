@@ -19,8 +19,25 @@ const __dirname = path.dirname(__filename);
 
 const NODE_ENV = process.env.NODE_ENV || 'production';
 const PORT = process.env.PORT || 3000;
+const isRender = !!process.env.RENDER;
+const caCertPath = path.join(__dirname, 'bin', 'byuicse-psql-cert.pem');
 
-const caCert = fs.readFileSync(path.join(__dirname, 'bin', 'byuicse-psql-cert.pem'));
+const buildSslConfig = () => {
+    if (isRender) {
+        return { rejectUnauthorized: false };
+    }
+
+    if (fs.existsSync(caCertPath)) {
+        const caCert = fs.readFileSync(caCertPath);
+        return {
+            ca: caCert,
+            rejectUnauthorized: true,
+            checkServerIdentity: () => undefined
+        };
+    }
+
+    return false;
+};
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
@@ -32,7 +49,7 @@ app.set('views', path.join(__dirname, 'src/views'));
 const PgSession = pg(session);
 const sessionPool = new Pool({
     connectionString: process.env.DB_URL,
-    ssl: { ca: caCert, rejectUnauthorized: true, checkServerIdentity: () => undefined }
+    ssl: buildSslConfig()
 });
 
 app.use(session({
