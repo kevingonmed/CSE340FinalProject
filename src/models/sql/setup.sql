@@ -14,9 +14,14 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     home_city VARCHAR(100),
-    role_id INTEGER REFERENCES roles(id) DEFAULT (SELECT id FROM roles WHERE name = 'user'),
+    role_id INTEGER REFERENCES roles(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Backfill role_id for any users without a role
+UPDATE users
+SET role_id = (SELECT id FROM roles WHERE name = 'user')
+WHERE role_id IS NULL;
 
 -- Trips
 CREATE TABLE IF NOT EXISTS trips (
