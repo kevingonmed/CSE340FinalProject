@@ -77,8 +77,14 @@ const processNewTrip = async (req, res) => {
         return res.redirect(`/trips/${trip.id}`);
     } catch (error) {
         console.error(error);
-        req.flash('error', 'We could not generate your trip right now. Please try again.');
-        return res.redirect('/trips/new');
+        const errorMessage = 'We could not generate your trip right now. Please review your inputs and try again.';
+        return res.status(500).render('trips/new', {
+            title: 'Plan a New Trip',
+            errors: [{ msg: errorMessage }],
+            groupTypes,
+            vibes,
+            formData: req.body
+        });
     }
 };
 

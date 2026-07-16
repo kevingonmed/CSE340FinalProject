@@ -2,6 +2,7 @@
     <section class="trip-form-section">
         <h1>Plan Your Next Trip</h1>
         <p>Answer five quick questions and we will build your starter itinerary.</p>
+        <p class="generation-note">Generation can take up to 20 seconds. Trips are capped at 12 days to control API usage.</p>
 
         <% if (errors.length > 0) { %>
             <ul class="error-list">
@@ -11,7 +12,7 @@
             </ul>
         <% } %>
 
-        <form action="/trips/new" method="POST" class="trip-form">
+        <form action="/trips/new" method="POST" class="trip-form" id="tripForm">
             <div class="form-group">
                 <label for="homeCity">Home City</label>
                 <input
@@ -86,7 +87,23 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn">Generate Trip</button>
+            <button type="submit" class="btn" id="generateTripButton">Generate Trip</button>
+            <p class="loading-message" id="tripLoadingMessage" aria-live="polite">
+                Generating your itinerary... please wait.
+            </p>
         </form>
     </section>
+    <script>
+        const tripForm = document.getElementById('tripForm');
+        const generateTripButton = document.getElementById('generateTripButton');
+        const tripLoadingMessage = document.getElementById('tripLoadingMessage');
+
+        if (tripForm && generateTripButton && tripLoadingMessage) {
+            tripForm.addEventListener('submit', () => {
+                generateTripButton.disabled = true;
+                generateTripButton.textContent = 'Generating...';
+                tripLoadingMessage.classList.add('active');
+            });
+        }
+    </script>
 <%- include('../partials/footer') %>

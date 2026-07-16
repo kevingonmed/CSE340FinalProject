@@ -252,8 +252,29 @@ footer {
     color: var(--text-muted);
 }
 
+.generation-note {
+    font-size: 0.95rem;
+    background: #eef9ff;
+    color: #1f5f93;
+    border: 1px solid #cae7ff;
+    border-radius: 10px;
+    padding: 0.65rem 0.8rem;
+}
+
 .trip-form {
     padding: 1.2rem;
+}
+
+.loading-message {
+    display: none;
+    margin-top: 0.6rem;
+    color: #33415f;
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.loading-message.active {
+    display: block;
 }
 
 .dashboard-trips {
@@ -347,6 +368,93 @@ footer {
     color: #4f607f;
     font-style: normal;
     font-weight: 600;
+}
+
+.admin-hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.admin-hero p {
+    color: var(--text-muted);
+}
+
+.admin-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.admin-stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 1rem;
+}
+
+.admin-stat-card h3 {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.2rem;
+}
+
+.admin-stat-card p {
+    font-size: 1.55rem;
+    font-weight: 800;
+}
+
+.admin-table-section {
+    margin-top: 1rem;
+}
+
+.table-wrap {
+    margin-top: 0.5rem;
+    overflow-x: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+
+.admin-table th,
+.admin-table td {
+    text-align: left;
+    padding: 0.72rem 0.85rem;
+    border-bottom: 1px solid #e6ebf7;
+}
+
+.admin-table thead th {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: #f7f9ff;
+}
+
+.admin-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.role-pill {
+    display: inline-block;
+    border-radius: 999px;
+    background: #e9ecff;
+    color: var(--brand-strong);
+    padding: 0.2rem 0.6rem;
+    font-size: 0.82rem;
+    font-weight: 700;
 }
 
 @media (max-width: 640px) {

@@ -1,0 +1,79 @@
+<%- include('../partials/header') %>
+    <section class="admin-hero">
+        <h1>Admin Dashboard</h1>
+        <p>Monitor users and recent trips across the platform.</p>
+    </section>
+
+    <section class="admin-stats-grid">
+        <article class="admin-stat-card">
+            <h3>Total Users</h3>
+            <p><%= Number(stats.total_users || 0) %></p>
+        </article>
+        <article class="admin-stat-card">
+            <h3>Total Trips</h3>
+            <p><%= Number(stats.total_trips || 0) %></p>
+        </article>
+    </section>
+
+    <section class="admin-table-section">
+        <h2>Users</h2>
+        <div class="table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach((account) => { %>
+                        <tr>
+                            <td><%= `${account.first_name} ${account.last_name}` %></td>
+                            <td><%= account.email %></td>
+                            <td><span class="role-pill"><%= account.role_name %></span></td>
+                            <td><%= new Date(account.created_at).toLocaleDateString() %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="admin-table-section">
+        <h2>Recent Trips</h2>
+        <div class="table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Destination</th>
+                        <th>Owner</th>
+                        <th>Dates</th>
+                        <th>Vibe</th>
+                        <th>Budget</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (trips.length === 0) { %>
+                        <tr>
+                            <td colspan="6">No trips found yet.</td>
+                        </tr>
+                    <% } else { %>
+                        <% trips.forEach((trip) => { %>
+                            <tr>
+                                <td><%= trip.destination %></td>
+                                <td><%= trip.owner_email %></td>
+                                <td><%= trip.travel_dates %></td>
+                                <td><%= trip.vibe %></td>
+                                <td>$<%= Number(trip.budget || 0).toFixed(2) %></td>
+                                <td><%= new Date(trip.created_at).toLocaleDateString() %></td>
+                            </tr>
+                        <% }); %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </section>
+<%- include('../partials/footer') %>

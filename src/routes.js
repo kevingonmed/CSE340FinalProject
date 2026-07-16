@@ -3,7 +3,8 @@ import { showLoginForm, processLogin, processLogout } from './controllers/forms/
 import { showRegistrationForm, processRegistration } from './controllers/forms/registration.js';
 import { showDashboard } from './controllers/dashboard.js';
 import { showNewTripForm, processNewTrip, showTrip } from './controllers/trips.js';
-import { requireLogin } from './middleware/auth.js';
+import { showAdminDashboard } from './controllers/admin.js';
+import { requireLogin, requireRole } from './middleware/auth.js';
 import { loginValidation, registrationValidation } from './middleware/validation/forms.js';
 import { tripValidation } from './middleware/validation/trips.js';
 
@@ -24,5 +25,6 @@ router.get('/dashboard', requireLogin, showDashboard);
 router.get('/trips/new', requireLogin, showNewTripForm);
 router.post('/trips/new', requireLogin, tripValidation, processNewTrip);
 router.get('/trips/:id', requireLogin, showTrip);
+router.get('/admin', requireLogin, requireRole('admin'), showAdminDashboard);
 
 export default router;
