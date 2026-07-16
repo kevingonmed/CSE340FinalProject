@@ -1,52 +1,16 @@
 import { validationResult } from 'express-validator';
 import { createTripWithItinerary, getTripByIdForUser } from '../models/trips.js';
 import { groupTypes, vibes } from '../middleware/validation/trips.js';
+import { generateItinerary } from '../services/ai/index.js';
 
-const buildMockItinerary = ({ homeCity, budget, travelDates, groupType, vibe }) => {
-    const destinationByVibe = {
-        adventure: 'Moab, Utah',
-        relax: 'Carmel-by-the-Sea, California',
-        culture: 'Santa Fe, New Mexico',
-        food: 'Portland, Oregon',
-        nature: 'Jackson, Wyoming'
-    };
+const MAX_TRIP_DAYS = 12;
 
-    const destination = destinationByVibe[vibe] || 'Denver, Colorado';
-    const budgetLevel = Number(budget) < 700 ? 'budget-friendly' : Number(budget) > 1800 ? 'premium' : 'balanced';
-    const groupLabel = groupType.charAt(0).toUpperCase() + groupType.slice(1);
-
-    return {
-        destination,
-        whyPicked: `${destination} matches your ${vibe} vibe, ${budgetLevel} budget range, and ${groupLabel.toLowerCase()} travel style from ${homeCity}.`,
-        days: [
-            {
-                dayNumber: 1,
-                title: 'Arrival and Local Highlights',
-                activities: [
-                    { time: '9:00 AM', description: `Arrive from ${homeCity} and check in`, estimatedCost: 0 },
-                    { time: '11:00 AM', description: `Explore downtown ${destination}`, estimatedCost: 20 },
-                    { time: '6:00 PM', description: 'Welcome dinner at a top-rated local spot', estimatedCost: 45 }
-                ]
-            },
-            {
-                dayNumber: 2,
-                title: `${groupLabel} ${vibe} Experience`,
-                activities: [
-                    { time: '8:30 AM', description: `Main ${vibe} activity block`, estimatedCost: 65 },
-                    { time: '1:30 PM', description: 'Lunch and neighborhood walk', estimatedCost: 25 },
-                    { time: '4:00 PM', description: 'Free-time recommendations and photo spots', estimatedCost: 0 }
-                ]
-            },
-            {
-                dayNumber: 3,
-                title: 'Wrap-Up and Return',
-                activities: [
-                    { time: '9:30 AM', description: 'Relaxed morning and souvenir stop', estimatedCost: 30 },
-                    { time: '12:00 PM', description: `Check out and return travel (${travelDates})`, estimatedCost: 0 }
-                ]
-            }
-        ]
-    };
+const calculateTripDays = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const millisecondsPerDay = 24 * 60 * 60 * 1000;
+    const rawDays = Math.floor((end - start) / millisecondsPerDay) + 1;
+    return Math.min(Math.max(rawDays, 1), MAX_TRIP_DAYS);
 };
 
 const showNewTripForm = (req, res) => {
@@ -58,7 +22,8 @@ const showNewTripForm = (req, res) => {
         formData: {
             homeCity: '',
             budget: '',
-            travelDates: '',
+            startDate: '',
+            endDate: '',
             groupType: '',
             vibe: ''
         }
@@ -78,8 +43,17 @@ const processNewTrip = async (req, res) => {
     }
 
     try {
-        const { homeCity, budget, travelDates, groupType, vibe } = req.body;
-        const itinerary = buildMockItinerary({ homeCity, budget, travelDates, groupType, vibe });
+        const { homeCity, budget, startDate, endDate, groupType, vibe } = req.body;
+        const travelDates = `${startDate} to ${endDate}`;
+        const tripDays = calculateTripDays(startDate, endDate);
+        const { itinerary, usedFallback } = await generateItinerary({
+            homeCity,
+            budget,
+            travelDates,
+            tripDays,
+            groupType,
+            vibe
+        });
 
         const trip = await createTripWithItinerary({
             userId: req.session.user.id,
@@ -93,6 +67,12 @@ const processNewTrip = async (req, res) => {
             days: itinerary.days
         });
 
+        if (usedFallback) {
+            req.flash('warning', 'AI service was unavailable, so we generated a sample itinerary.');
+        }
+        if (tripDays === MAX_TRIP_DAYS) {
+            req.flash('info', 'Trip plans are currently capped at 12 days to control API usage.');
+        }
         req.flash('success', 'Trip generated and saved successfully.');
         return res.redirect(`/trips/${trip.id}`);
     } catch (error) {

@@ -37,16 +37,25 @@
             </div>
 
             <div class="form-group">
-                <label for="travelDates">Travel Dates</label>
+                <label for="startDate">Start Date</label>
                 <input
-                    type="text"
-                    id="travelDates"
-                    name="travelDates"
-                    value="<%= formData.travelDates || '' %>"
-                    placeholder="Aug 5-9, 2026"
+                  type="date"
+                  id="startDate"
+                  name="startDate"
+                  value="<%= formData.startDate || '' %>"
                 >
-            </div>
-
+              </div>
+              
+              <div class="form-group">
+                <label for="endDate">End Date</label>
+                <input
+                  type="date"
+                  id="endDate"
+                  name="endDate"
+                  value="<%= formData.endDate || '' %>"
+                >
+              </div>
+              
             <div class="form-group">
                 <label for="groupType">Who are you traveling with?</label>
                 <select id="groupType" name="groupType">
